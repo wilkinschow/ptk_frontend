@@ -1,0 +1,24 @@
+<div>
+    <input #fileInput type="file" (change)="onFileSelected($event)" accept="video/mp4" />
+  </div>
+  
+  <!-- Show randRoll value -->
+  <div *ngIf="randRoll !== null">
+    randRoll: {{ randRoll }}
+  </div>
+  
+  <!-- Show this only if the video is valid -->
+  <div *ngIf="isValidVideo">
+    <textarea rows="3" cols="40" [(ngModel)]="fileMetadata"></textarea>
+  </div>
+  
+  <!-- Show deepfake warning when the video is invalid -->
+  <div *ngIf="!isValidVideo && selectedFile" class="deepfake-box">
+    DEEPFAKE DETECTED!
+  </div>
+  
+  <div>
+    <button (click)="uploadVideo(fileInput)" [disabled]="!selectedFile || !isValidVideo">Upload</button>
+    <button (click)="cancelSelection(fileInput)" [disabled]="!selectedFile">Cancel</button>
+  </div>
+  

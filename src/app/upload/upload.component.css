@@ -1,0 +1,11 @@
+.deepfake-box {
+    color: red;
+    font-weight: bold;
+    border: 2px solid red;
+    padding: 10px;
+    margin-top: 10px;
+    text-align: center;
+    background-color: #ffcccc;
+    border-radius: 5px;
+  }
+  
