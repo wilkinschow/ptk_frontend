@@ -1,11 +1,132 @@
-.deepfake-box {
-    color: red;
-    font-weight: bold;
-    border: 2px solid red;
-    padding: 10px;
-    margin-top: 10px;
-    text-align: center;
-    background-color: #ffcccc;
-    border-radius: 5px;
+/* Centering the container */
+.container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  text-align: center;
+  background-color: white; /* Optional background color */
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
+.slogan  {
+  margin: 10px 0;
+  -webkit-background-clip: text;
+  background-clip: text;
+  font-weight: normal;
+  line-height: 16px;
+  word-break: keep-all;
+  width:450px;
+
+  h3{
+    color: rgb(66, 185, 185);
+    font-size: 32px;
+    font-weight: normal;
   }
-  
+
+  p{
+    font-size: 24px;
+  }
+}
+
+
+.file-selector {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 20px;
+  background: #f4f4f4;
+  width: 800px;
+  height: 60px;
+}
+
+input[type="text"] {
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+  border: none;
+  border-radius: 0;
+  background: none;
+  margin-left: 8px;
+}
+
+.rand-roll {
+  font-size: 18px;
+  font-weight: bold;
+  color: #555;
+  margin-top: 10px;
+}
+
+.metadata {
+  margin-top: 15px;
+}
+
+.deepfake-box {
+  color: red;
+  font-weight: bold;
+  border: 2px solid red;
+  padding: 10px;
+  margin-top: 10px;
+  text-align: center;
+  background-color: #ffcccc;
+  border-radius: 5px;
+}
+
+.buttons {
+  margin-top: 20px;
+  width: 300px;  
+  height: 50px;
+  background-color: #046BA9;
+}
+
+button {
+  padding: 10px 20px;
+  margin: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  border: none;
+  border-radius: 0;
+  color: white;
+}
+
+button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+button:not([disabled]):hover {
+  background-color: #0056b3; /* Darker blue on hover */
+}
+
+.upload-btn {
+  color: #A0B1BB;
+  background:none;
+  padding: 10px 15px;
+  font-size: 32px;
+  cursor: pointer;
+  margin-right: 12px;
+}
+
+.header {
+  width: 100%;
+  border-bottom: 1px solid #dddddd;
+  padding-bottom: 20px;
+}
+
+/* Style for the icon at the top */
+.top-icon {
+  width: 222px;
+  height: 90px;
+  display:block;
+  position: relative;
+  top: 16px; 
+  left: 10%;
+}
+
+/* Style for the grey breakline */
+.breakline {
+  border: 0;
+  margin: 36px 10px; /* Adjust spacing as needed */
+}

@@ -1,24 +1,40 @@
-<div>
-    <input #fileInput type="file" (change)="onFileSelected($event)" accept="video/mp4" />
+<div class="header">
+  <img src="assets/logo.png" alt="Your Icon" class="top-icon" />
+</div>
+
+<div class="container">
+  <div class="slogan">
+    <h3>Hello, beautiful human.</h3>
+    <p>Place a video link or upload a video</p>
   </div>
-  
-  <!-- Show randRoll value -->
-  <div *ngIf="randRoll !== null">
+
+  <!-- New file selector with text box and upload icon button -->
+  <div class="file-selector">
+    <input
+      #fileInput
+      type="text"
+      [(ngModel)]="filePath"
+      placeholder="Enter video URL or click to upload"
+      (blur)="onFileBlur()"
+    />
+    <button (click)="triggerFileSelection()" class="upload-btn">
+      <i class="fa-solid fa-arrow-up-from-bracket"></i>
+    </button>
+  </div>
+
+  <div *ngIf="randRoll !== null" class="rand-roll">
     randRoll: {{ randRoll }}
   </div>
-  
-  <!-- Show this only if the video is valid -->
-  <div *ngIf="isValidVideo">
+
+  <div *ngIf="isValidVideo" class="metadata">
     <textarea rows="3" cols="40" [(ngModel)]="fileMetadata"></textarea>
   </div>
-  
-  <!-- Show deepfake warning when the video is invalid -->
+
   <div *ngIf="!isValidVideo && selectedFile" class="deepfake-box">
     DEEPFAKE DETECTED!
   </div>
-  
+
   <div>
-    <button (click)="uploadVideo(fileInput)" [disabled]="!selectedFile || !isValidVideo">Upload</button>
-    <button (click)="cancelSelection(fileInput)" [disabled]="!selectedFile">Cancel</button>
+    <button class="buttons" (click)="uploadVideo(fileInput)" [disabled]="!filePath || !isValidVideo">Scan</button>
   </div>
-  
+</div>

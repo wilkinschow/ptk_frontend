@@ -13,28 +13,37 @@ export class UploadComponent {
   selectedFile: File | null = null;
   fileMetadata: string = '';
   uploadedFileId: string | null = null;
-  isValidVideo: boolean | null = null; // Will store true (valid) or false (deepfake)
-  randRoll: number | null = null; // Store the random roll value
+  isValidVideo: boolean | null = null;
+  randRoll: number | null = null;
+  filePath: string = ''; // Store URL or file path
 
   onFileSelected(event: Event) {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files.length > 0) {
       this.selectedFile = input.files[0];
+      this.filePath = this.selectedFile.name; // Update the text box with the file name
 
       // Roll a number between 0 and 100
       this.randRoll = Math.floor(Math.random() * 101);
 
       // Simulate validation: If the number is below 50, it's a deepfake
-      this.isValidVideo = this.randRoll >= 50; // If < 50, it's deepfake
+      this.isValidVideo = this.randRoll >= 50;
 
       if (this.isValidVideo) {
-        // Generate initial metadata only if the video is valid
         this.fileMetadata = `Name: ${this.selectedFile.name}\nSize: ${(this.selectedFile.size / 1024 / 1024).toFixed(2)} MB\nType: ${this.selectedFile.type}`;
       } else {
-        // If deepfake, clear metadata
         this.fileMetadata = '';
       }
     }
+  }
+
+  triggerFileSelection() {
+    // Trigger file input on the icon button click
+    const inputElement = document.createElement('input');
+    inputElement.type = 'file';
+    inputElement.accept = 'video/mp4';
+    inputElement.onchange = (event: Event) => this.onFileSelected(event);
+    inputElement.click();
   }
 
   async uploadVideo(fileInput: HTMLInputElement) {
@@ -84,6 +93,11 @@ export class UploadComponent {
     this.uploadedFileId = null;
     this.isValidVideo = null;
     this.randRoll = null;
+    this.filePath = ''; // Clear the text box
     fileInput.value = '';
+  }
+
+  onFileBlur() {
+    // Trigger validation or update logic on blur if necessary
   }
 }
