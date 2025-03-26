@@ -5,11 +5,12 @@ import {MatButtonModule} from '@angular/material/button';
 import {MatCardModule} from '@angular/material/card';
 import moment from 'moment';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-upload',
   standalone: true,
-  imports: [CommonModule, FormsModule, MatCardModule, MatButtonModule, MatSlideToggleModule],
+  imports: [CommonModule, FormsModule, MatCardModule, MatButtonModule, MatSlideToggleModule, MatSnackBarModule ],
   templateUrl: './upload.component.html',
   styleUrls: ['./upload.component.css']
 })
@@ -31,6 +32,9 @@ export class UploadComponent {
   defaultVideoDesc: string = 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem.';
   videoDesc: string = this.defaultVideoDesc;
   addDesc: string = '';
+  
+  
+  constructor(private snackBar: MatSnackBar) {}
 
   generateUUID(): string {
     return crypto.randomUUID();
@@ -43,6 +47,14 @@ export class UploadComponent {
     const i = Math.floor(Math.log(bytes) / Math.log(1024));
   
     return (bytes / Math.pow(1024, i)).toFixed(2) + ' ' + sizes[i];
+  }
+
+  openSnackBar(msg: string='Upload successful!') {
+    this.snackBar.open(msg, 'Close', {
+      duration: 5000, // Auto close after 5 seconds
+      horizontalPosition: 'center',
+      verticalPosition: 'top',
+    });
   }
 
   getDT(isTime: boolean){
@@ -84,12 +96,15 @@ export class UploadComponent {
     this.uuid = this.generateUUID();
   }
 
-  async toggleLoading() {
-    this.isLoading = true; // Set to true when starting loading
+  async toggleLoading(): Promise<void> {
+    this.isLoading = true; // Start loading
   
-    setTimeout(() => {
-      this.isLoading = false; // Set to false after 3 seconds
-    }, 3000); // 3000 ms = 3 seconds
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        this.isLoading = false; // Stop loading after 3 seconds
+        resolve();
+      }, 3000);
+    });
   }
   
 
@@ -136,12 +151,12 @@ export class UploadComponent {
     if (this.isValidUrl(this.filePath)) {
       console.log('Analyzing URL:', this.filePath);
       // Add logic to POST URL and process the response here
-      alert(`Analyzing video at URL: ${this.filePath}`);
+      this.openSnackBar(`Analyzing video at URL: ${this.filePath}`);
       return;
     }
 
     if (!this.selectedFile) {
-      alert('Invalid video! Cannot upload.');
+      this.openSnackBar('Invalid video! Cannot upload.');
       return;
     }
 
@@ -172,7 +187,9 @@ export class UploadComponent {
         this.getMetadata();
       }
 
-      alert('Upload successful!');
+      await this.toggleLoading();
+
+      this.openSnackBar();
       this.cancelSelection();
     } catch (error) {
       console.error('Upload failed', error);

@@ -1,4 +1,29 @@
 /* You can add global styles to this file, and also import other style files */
 
 html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+/* Avenir Font */
+@font-face {
+    font-family: 'Avenir';
+    src: url('/assets/fonts/Avenir-Regular.woff2') format('woff2'),
+         url('/assets/fonts/Avenir-Regular.woff') format('woff'),
+         url('/assets/fonts/Avenir-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+  }
+  
+  /* Inter Font */
+  @font-face {
+    font-family: 'Inter';
+    src: url('/assets/fonts/Inter-Regular.woff2') format('woff2'),
+         url('/assets/fonts/Inter-Regular.woff') format('woff'),
+         url('/assets/fonts/Inter-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+  }
+  
+  /* Set default font to Inter, fallback to Avenir */
+  body {
+    margin: 0;
+    font-family: 'Inter', sans-serif !important;  /* Inter is the default */
+  }

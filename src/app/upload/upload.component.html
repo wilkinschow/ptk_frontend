@@ -16,7 +16,7 @@
 <!-- Single webpage build -->
 <!-- START of Region 1: LANDING PAGE ################################################################################## -->
 <div *ngIf="!isScanned && !isLoading" class="container">
-  <div class="slogan">
+  <div class="slogan avenir">
     <h3 class="gradient-text">Hello, beautiful human.</h3>
     <p>Place a video link or upload a video</p>
   </div>
@@ -60,7 +60,7 @@
 <div *ngIf="isScanned && !isLoading && !isValidVideo" class="results">
   <mat-card class="card" appearance="outlined">
     <mat-card-header class="card-header">
-      <mat-card-title class="title-deepfake-true" >
+      <mat-card-title class="title-deepfake-true card-title" >
         <i class="fa-solid fa-circle-exclamation"></i>
         SUSPECTED FAKE
       </mat-card-title>
@@ -81,7 +81,7 @@
 
   <mat-card class="card" appearance="outlined" style="margin-top: 2rem;">
     <mat-card-header class="card-header">
-      <mat-card-title>
+      <mat-card-title class="card-title">
         Uploaded Video
       </mat-card-title>
     </mat-card-header>
@@ -96,7 +96,7 @@
   </mat-card>
   <mat-card class="card" appearance="outlined">
     <mat-card-header class="card-header">
-      <mat-card-title>
+      <mat-card-title class="card-title">
         Additional Details
       </mat-card-title>
     </mat-card-header>
@@ -126,7 +126,7 @@
 <div *ngIf="isScanned && !isLoading && isValidVideo" class="results">
   <mat-card class="card" appearance="outlined">
     <mat-card-header class="card-header">
-      <mat-card-title class="title-deepfake-false" >
+      <mat-card-title class="title-deepfake-false card-title" >
         <i class="fa-regular fa-circle-check"></i>
         NO DEEPFAKE DETECTED
       </mat-card-title>
@@ -147,7 +147,7 @@
 
   <mat-card class="card" appearance="outlined" style="margin-top: 2rem;">
     <mat-card-header class="card-header">
-      <mat-card-title>
+      <mat-card-title class="card-title">
         Uploaded Video
       </mat-card-title>
     </mat-card-header>
@@ -162,7 +162,7 @@
   </mat-card>
   <mat-card class="card" appearance="outlined">
     <mat-card-header class="card-header">
-      <mat-card-title>
+      <mat-card-title class="card-title">
         Case Report Summary
       </mat-card-title>
     </mat-card-header>
@@ -189,7 +189,7 @@
   </mat-card>
   <mat-card class="card" appearance="outlined">
     <mat-card-header class="card-header">
-      <mat-card-title>
+      <mat-card-title class="card-title">
         Additional Details
       </mat-card-title>
     </mat-card-header>
