@@ -4,7 +4,7 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  height: 100vh;
+  height: 75vh;
   text-align: center;
   background-color: white; /* Optional background color */
   font-family: Verdana, Geneva, Tahoma, sans-serif;
@@ -42,7 +42,7 @@
   height: 60px;
 }
 
-input[type="text"] {
+.home-input-bar {
   width: 100%;
   padding: 10px;
   font-size: 16px;
@@ -63,15 +63,13 @@ input[type="text"] {
   margin-top: 15px;
 }
 
-.deepfake-box {
-  color: red;
-  font-weight: bold;
-  border: 2px solid red;
-  padding: 10px;
+.results {
+  padding: 20px;
   margin-top: 10px;
-  text-align: center;
-  background-color: #ffcccc;
-  border-radius: 5px;
+  margin-left: auto;
+  margin-right: auto;
+  width: 80%;
+  max-width: 1050px;
 }
 
 .buttons {
@@ -83,11 +81,10 @@ input[type="text"] {
 
 button {
   padding: 10px 20px;
-  margin: 5px;
   font-size: 16px;
   cursor: pointer;
   border: none;
-  border-radius: 0;
+  border-radius: 2px;
   color: white;
 }
 
@@ -111,22 +108,180 @@ button:not([disabled]):hover {
 
 .header {
   width: 100%;
+  height: 100px;
   border-bottom: 1px solid #dddddd;
-  padding-bottom: 20px;
+}
+
+.new-scan-btn{
+  background: transparent;
+  border: 1px solid #058FE1;
+  color: black;
+  display:inline;
+  position: relative;
+  top: -20px; 
+  left: 60vw;
+}
+
+.new-scan-btn:hover{
+  color: white;
 }
 
 /* Style for the icon at the top */
 .top-icon {
   width: 222px;
   height: 90px;
-  display:block;
+  display:inline;
   position: relative;
-  top: 16px; 
+  top: 0; 
   left: 10%;
 }
 
-/* Style for the grey breakline */
-.breakline {
-  border: 0;
-  margin: 36px 10px; /* Adjust spacing as needed */
+/* Style for the icon at the top */
+.loading-icon {
+  width: 800px;
+  height: 600px;
+  display:block;
+  position: relative;
+  top: 50%; 
+  left: 50%;
+}
+
+.image-container {
+  background-image: url('../../assets/loading.gif');
+  background-repeat: no-repeat;
+  background-size: contain;
+  position: relative;
+  left:50%;
+  top:50%;
+  transform: translate(-400px, 0);
+  width: 800px;
+  height: 600px;
+}
+
+.loading-text {
+  position: relative;
+  text-align: center;
+  top:50%;
+  transform: translate(15px, 100px);
+}
+
+.dot {
+  animation: dotAnimation 1.5s infinite steps(1);
+}
+
+.dot:nth-child(1) {
+  animation-delay: 0s;
+}
+
+.dot:nth-child(2) {
+  animation-delay: 0.5s;
+}
+
+.dot:nth-child(3) {
+  animation-delay: 1s;
+}
+
+@keyframes dotAnimation {
+  0% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.5;
+  }
+}
+
+.card{
+  background: white;
+  border: 1px solid #D0D8DD;
+  border-radius: 2px;
+  font-size: 16px;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
+.card-header{
+  background: #F7F9F9;
+  padding: 12px;
+  padding-left: 24px;
+  padding-right: 24px;
+}
+
+.card-body{
+  display:flex;
+  flex-direction: row;
+  padding:24px;
+}
+
+.card-label-container{
+  flex-direction: column;
+  width: 100%;
+}
+
+.label-gaps{
+  gap: 2rem;
+}
+
+.card-content-label{
+  margin-bottom:1rem;
+  font-weight: bold;
+  span{
+    font-weight: normal;
+  }
+}
+
+.subcontent{
+  padding-top: 0;
+}
+
+.title-deepfake-true{
+  color: #F59E0B;
+}
+
+.title-deepfake-false{
+  color: #10B981;
+}
+
+.results-meter-icon{
+  margin: 2rem;
+}
+
+.debug{
+  border:1px solid red;
+}
+
+.card-input-box{
+  border: 1px solid #B8C5CC;
+  margin: 0;
+  border-radius: 2px;
+  width: 97.5%;
+  padding: 10px;
+  font-size: 16px;
+}
+
+.report-labels{
+  width: 92.5%;
+}
+
+.video-player{
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+video {
+  border-radius: 5px;
+  border: 1px solid #B8C5CC;
+}
+
+.card-textarea {
+  width: 97% !important;
+  height: 120px;
+  padding: 10px;
+  font-size: 16px;
+  border-radius: 2px;
+  border: 1px solid #B8C5CC;
+  resize: none;
 }

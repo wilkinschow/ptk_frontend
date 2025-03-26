@@ -1,10 +1,23 @@
+<mat-slide-toggle [(ngModel)]="forcedIsDeepFake" color="primary">
+  Is DeepFake?
+</mat-slide-toggle>
+
 <div class="header">
   <img src="assets/logo.png" alt="Your Icon" class="top-icon" />
+  <button
+    *ngIf="isScanned && !isLoading"
+    class="new-scan-btn"
+    (click)="cancelSelection()"
+  >
+    New Scan
+  </button>
 </div>
 
-<div class="container">
+<!-- Single webpage build -->
+<!-- START of Region 1: LANDING PAGE ################################################################################## -->
+<div *ngIf="!isScanned && !isLoading" class="container">
   <div class="slogan">
-    <h3>Hello, beautiful human.</h3>
+    <h3 class="gradient-text">Hello, beautiful human.</h3>
     <p>Place a video link or upload a video</p>
   </div>
 
@@ -15,26 +28,204 @@
       type="text"
       [(ngModel)]="filePath"
       placeholder="Enter video URL or click to upload"
-      (blur)="onFileBlur()"
+      (input)="onUrlInput()"
+      [disabled]="selectedFile !== null"
+      class="home-input-bar"
     />
     <button (click)="triggerFileSelection()" class="upload-btn">
+      <input
+        type="file"
+        id="hiddenFileInput"
+        accept="video/mp4"
+        (change)="onFileSelected($event)"
+        style="display: none;"
+      />
       <i class="fa-solid fa-arrow-up-from-bracket"></i>
     </button>
-  </div>
-
-  <div *ngIf="randRoll !== null" class="rand-roll">
-    randRoll: {{ randRoll }}
-  </div>
-
-  <div *ngIf="isValidVideo" class="metadata">
-    <textarea rows="3" cols="40" [(ngModel)]="fileMetadata"></textarea>
-  </div>
-
-  <div *ngIf="!isValidVideo && selectedFile" class="deepfake-box">
-    DEEPFAKE DETECTED!
-  </div>
+  </div>  
 
   <div>
-    <button class="buttons" (click)="uploadVideo(fileInput)" [disabled]="!filePath || !isValidVideo">Scan</button>
+    <button
+      class="buttons"
+      (click)="scanVideo()"
+      [disabled]="!((isValidUrl(filePath) || selectedFile))"
+    >
+      {{ scanButtonText }}
+    </button>
   </div>
 </div>
+<!-- END of Region 1: LANDING PAGE ################################################################################## -->
+
+<!-- START of Region 2: DEEPFAKE PAGE ################################################################################## -->
+<div *ngIf="isScanned && !isLoading && !isValidVideo" class="results">
+  <mat-card class="card" appearance="outlined">
+    <mat-card-header class="card-header">
+      <mat-card-title class="title-deepfake-true" >
+        <i class="fa-solid fa-circle-exclamation"></i>
+        SUSPECTED FAKE
+      </mat-card-title>
+    </mat-card-header>
+    <mat-card-actions class="card-body">
+      <img class="results-meter-icon" src="assets/isDeepfake_true.png" alt="isDeepfake"/>
+      <div class="card-label-container">
+        <div class="card-content-label">Filename: <span>{{selectedFile!.name}}</span></div>
+        <div class="card-content-label">Size: <span>{{formatBytes(selectedFile!.size)}}</span></div>
+        <div class="card-content-label">Duration: <span>{{formatDuration(videoDuration)}}</span></div>
+      </div>
+      <div class="card-label-container">
+        <div class="card-content-label">Submission Date: <span>{{getDT(false)}}</span></div>
+        <div class="card-content-label">Submission Time: <span>{{getDT(true)}}</span></div>
+      </div>
+    </mat-card-actions>
+  </mat-card>
+
+  <mat-card class="card" appearance="outlined" style="margin-top: 2rem;">
+    <mat-card-header class="card-header">
+      <mat-card-title>
+        Uploaded Video
+      </mat-card-title>
+    </mat-card-header>
+    <mat-card-actions class="card-body">
+      <div class="video-player">
+        <video *ngIf="videoURL" width="640" height="360" controls>
+          <source [src]="videoURL" type="video/mp4">
+          Your browser does not support the video tag.
+        </video>
+      </div>
+    </mat-card-actions>
+  </mat-card>
+  <mat-card class="card" appearance="outlined">
+    <mat-card-header class="card-header">
+      <mat-card-title>
+        Additional Details
+      </mat-card-title>
+    </mat-card-header>
+    <mat-card-actions class="card-body">
+      <div class="card-label-container">
+        <div class="card-content-label">Where did you get this video from?</div>
+        <input type="text" [(ngModel)]="addDesc" placeholder="WhatsApp, Facebook, TikTok, Telegram etc." class="card-input-box"/>
+      </div>
+    </mat-card-actions>
+  </mat-card>
+
+  <div>
+    <button
+      class="buttons"
+      (click)="uploadVideo()"
+      [disabled]="false"
+    >
+      Submit to Authority
+    </button>
+  </div>
+</div>
+<!-- END of Region 2: DEEPFAKE PAGE ################################################################################## -->
+
+
+
+<!-- START of Region 3: AUTHENTIC PAGE ################################################################################## -->
+<div *ngIf="isScanned && !isLoading && isValidVideo" class="results">
+  <mat-card class="card" appearance="outlined">
+    <mat-card-header class="card-header">
+      <mat-card-title class="title-deepfake-false" >
+        <i class="fa-regular fa-circle-check"></i>
+        NO DEEPFAKE DETECTED
+      </mat-card-title>
+    </mat-card-header>
+    <mat-card-actions class="card-body">
+      <img class="results-meter-icon" src="assets/isDeepfake_false.png" alt="isNotDeepfake"/>
+      <div class="card-label-container">
+        <div class="card-content-label">Filename: <span>{{selectedFile!.name}}</span></div>
+        <div class="card-content-label">Size: <span>{{formatBytes(selectedFile!.size)}}</span></div>
+        <div class="card-content-label">Duration: <span>{{formatDuration(videoDuration)}}</span></div>
+      </div>
+      <div class="card-label-container">
+        <div class="card-content-label">Submission Date: <span>{{getDT(false)}}</span></div>
+        <div class="card-content-label">Submission Time: <span>{{getDT(true)}}</span></div>
+      </div>
+    </mat-card-actions>
+  </mat-card>
+
+  <mat-card class="card" appearance="outlined" style="margin-top: 2rem;">
+    <mat-card-header class="card-header">
+      <mat-card-title>
+        Uploaded Video
+      </mat-card-title>
+    </mat-card-header>
+    <mat-card-actions class="card-body">
+      <div class="video-player">
+        <video *ngIf="videoURL" width="640" height="360" controls>
+          <source [src]="videoURL" type="video/mp4">
+          Your browser does not support the video tag.
+        </video>
+      </div>
+    </mat-card-actions>
+  </mat-card>
+  <mat-card class="card" appearance="outlined">
+    <mat-card-header class="card-header">
+      <mat-card-title>
+        Case Report Summary
+      </mat-card-title>
+    </mat-card-header>
+    <mat-card-actions class="card-body label-gaps">
+      <div class="card-label-container">
+        <div class="card-content-label">Case ID</div>
+        <input disabled type="text" [(ngModel)]="uuid" placeholder="Case ID" class="card-input-box report-labels"/>
+      </div>
+      <div class="card-label-container">
+        <div class="card-content-label">Date & Time of Report</div>
+        <input disabled type="text" [value]="formatDT('D MMMM YYYY, h:mm A')"  placeholder="Date & Time of Report" class="card-input-box report-labels"/>
+      </div>
+    </mat-card-actions>
+    <mat-card-actions class="card-body subcontent">
+      <div class="card-label-container">
+        <div class="card-content-label">Incident Details</div>
+        <textarea 
+          [(ngModel)]="videoDesc" 
+          placeholder="Describe what you saw in the video." 
+          class="card-textarea">
+        </textarea>
+      </div>
+    </mat-card-actions>
+  </mat-card>
+  <mat-card class="card" appearance="outlined">
+    <mat-card-header class="card-header">
+      <mat-card-title>
+        Additional Details
+      </mat-card-title>
+    </mat-card-header>
+    <mat-card-actions class="card-body">
+      <div class="card-label-container">
+        <div class="card-content-label">Where did you get this video from?</div>
+        <input type="text" [(ngModel)]="addDesc" placeholder="WhatsApp, Facebook, TikTok, Telegram etc." class="card-input-box"/>
+      </div>
+    </mat-card-actions>
+  </mat-card>
+
+  <div>
+    <button
+      class="buttons"
+      (click)="uploadVideo()"
+      [disabled]="false"
+    >
+      Submit to Authority
+    </button>
+  </div>
+</div>
+<!-- END of Region 3: AUTHENTIC PAGE ################################################################################## -->
+
+
+
+<!-- START of Region 4: LOADING PAGE ################################################################################## -->
+<div *ngIf="isLoading" class="loading">
+  <div class="image-container">
+    <h1 class="loading-text">
+      loading
+      <span class="dot">.</span>
+      <span class="dot">.</span>
+      <span class="dot">.</span>
+    </h1>
+
+  </div>
+</div>
+<!-- END of Region 4: LOADING PAGE ################################################################################## -->
+
