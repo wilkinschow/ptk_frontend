@@ -32,8 +32,6 @@ export class UploadComponent {
   defaultVideoDesc: string = 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem.';
   videoDesc: string = this.defaultVideoDesc;
   addDesc: string = '';
-  
-  
   constructor(private snackBar: MatSnackBar) {}
 
   generateUUID(): string {
@@ -138,8 +136,47 @@ export class UploadComponent {
   }
 
   async scanVideo(): Promise<void> {
-    await this.toggleLoading();
+    this.isLoading = true;
 
+    console.log("uploading to video to backend...");
+
+    //STEP 1: upload to backend to get uuid. #################################################################################################
+    const formData = new FormData();
+    formData.append('post_file', this.selectedFile!);
+    try {
+      const response = await fetch("/api/upload/", {
+        method: 'POST',
+        body: formData,
+      });
+
+      const data = await response.json();
+      if (data.media_uuid) this.uploadedFileId = data.media_uuid;
+    } catch (error) {
+      console.error('Something failed', error);
+    }
+
+    console.log("upload to backend complete. media_uuid: "+this.uploadedFileId);
+    console.log("fetching video description and deepfake status.");
+
+    //STEP 2: upload to backend to get uuid. #################################################################################################
+    try {
+      const response = await fetch(`/api/predict/${this.uploadedFileId}`, {
+        method: 'POST',
+      });
+
+      const data = await response.json();
+      if (data) {
+        this.videoDesc = data.summary;
+        this.isValidVideo = !data.deepfake;
+        this.openSnackBar('Scan completed!');
+      } else {
+        this.openSnackBar('Scan failed!');
+      }
+    } catch (error) {
+      console.error('Something failed', error);
+    }
+
+    this.isLoading = false;
     this.isValidVideo = !(this.forcedIsDeepFake);
     this.isScanned = true;
   }
