@@ -79,7 +79,7 @@
     </mat-card-actions>
   </mat-card>
 
-  <mat-card class="card" appearance="outlined" style="margin-top: 2rem;">
+  <mat-card *ngIf="hasEmbed" class="card" appearance="outlined" style="margin-top: 2rem;">
     <mat-card-header class="card-header">
       <mat-card-title class="card-title">
         Uploaded Video
