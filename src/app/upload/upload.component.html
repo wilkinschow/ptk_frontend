@@ -1,6 +1,6 @@
-<mat-slide-toggle [(ngModel)]="forcedIsDeepFake" color="primary">
+<!-- <mat-slide-toggle [(ngModel)]="forcedIsDeepFake" color="primary">
   Is DeepFake?
-</mat-slide-toggle>
+</mat-slide-toggle> -->
 
 <div class="header">
   <img src="assets/logo.png" alt="Your Icon" class="top-icon" />
@@ -69,8 +69,8 @@
       <img class="results-meter-icon" src="assets/isDeepfake_true.png" alt="isDeepfake"/>
       <div class="card-label-container">
         <div class="card-content-label">Filename: <span>{{selectedFile!.name}}</span></div>
-        <div class="card-content-label">Size: <span>{{formatBytes(selectedFile!.size)}}</span></div>
-        <div class="card-content-label">Duration: <span>{{formatDuration(videoDuration)}}</span></div>
+        <div *ngIf="videoURL" class="card-content-label">Size: <span>{{formatBytes(selectedFile!.size)}}</span></div>
+        <div *ngIf="videoURL" class="card-content-label">Duration: <span>{{formatDuration(videoDuration)}}</span></div>
       </div>
       <div class="card-label-container">
         <div class="card-content-label">Submission Date: <span>{{getDT(false)}}</span></div>
@@ -86,11 +86,20 @@
       </mat-card-title>
     </mat-card-header>
     <mat-card-actions class="card-body">
-      <div class="video-player">
-        <video *ngIf="videoURL" width="640" height="360" controls>
+      <div *ngIf="videoURL" class="video-player">
+        <video width="640" height="360" controls>
           <source [src]="videoURL" type="video/mp4">
           Your browser does not support the video tag.
         </video>
+      </div>
+      <div *ngIf="videoLink" class="video-player">
+        <iframe
+          width="640" height="360"
+          [src]="videoLink"
+          frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen
+        ></iframe>
       </div>
     </mat-card-actions>
   </mat-card>
@@ -135,8 +144,8 @@
       <img class="results-meter-icon" src="assets/isDeepfake_false.png" alt="isNotDeepfake"/>
       <div class="card-label-container">
         <div class="card-content-label">Filename: <span>{{selectedFile!.name}}</span></div>
-        <div class="card-content-label">Size: <span>{{formatBytes(selectedFile!.size)}}</span></div>
-        <div class="card-content-label">Duration: <span>{{formatDuration(videoDuration)}}</span></div>
+        <div *ngIf="videoURL" class="card-content-label">Size: <span>{{formatBytes(selectedFile!.size)}}</span></div>
+        <div *ngIf="videoURL" class="card-content-label">Duration: <span>{{formatDuration(videoDuration)}}</span></div>
       </div>
       <div class="card-label-container">
         <div class="card-content-label">Submission Date: <span>{{getDT(false)}}</span></div>
@@ -145,18 +154,27 @@
     </mat-card-actions>
   </mat-card>
 
-  <mat-card class="card" appearance="outlined" style="margin-top: 2rem;">
+  <mat-card *ngIf="hasEmbed" class="card" appearance="outlined" style="margin-top: 2rem;">
     <mat-card-header class="card-header">
       <mat-card-title class="card-title">
         Uploaded Video
       </mat-card-title>
     </mat-card-header>
     <mat-card-actions class="card-body">
-      <div class="video-player">
-        <video *ngIf="videoURL" width="640" height="360" controls>
+      <div *ngIf="videoURL" class="video-player">
+        <video width="640" height="360" controls>
           <source [src]="videoURL" type="video/mp4">
           Your browser does not support the video tag.
         </video>
+      </div>
+      <div *ngIf="videoLink" class="video-player">
+        <iframe
+          width="640" height="360"
+          [src]="videoLink"
+          frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen
+        ></iframe>
       </div>
     </mat-card-actions>
   </mat-card>
@@ -219,7 +237,7 @@
 <div *ngIf="isLoading" class="loading">
   <div class="image-container">
     <h1 class="loading-text">
-      loading
+      {{loadingText}}
       <span class="dot">.</span>
       <span class="dot">.</span>
       <span class="dot">.</span>

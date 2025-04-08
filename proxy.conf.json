@@ -1,6 +1,6 @@
 {
   "/api": {
-    "target": "https://g93xz3nrlje83m-8000.proxy.runpod.net",
+    "target": "https://rofyot5u21gsfg-8000.proxy.runpod.net/",
     "secure": false,
     "changeOrigin": true,
     "pathRewrite": {

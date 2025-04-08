@@ -6,6 +6,12 @@ import {MatCardModule} from '@angular/material/card';
 import moment from 'moment';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+
+enum MODE {
+  ANALYZE = "Analyze",
+  SCAN = "Scan"
+}
 
 @Component({
   selector: 'app-upload',
@@ -24,15 +30,21 @@ export class UploadComponent {
   isScanned: boolean = false;
   isValidVideo: boolean | null = false;
   filePath: string = '';
-  scanButtonText: string = 'Scan';
+  scanButtonText: string = MODE.SCAN;
   videoURL: string = '';
+  videoLink? : SafeResourceUrl;
   videoDuration: number = 0; // Store video duration
   uuid: string = '';
   currTime: Date = new Date();
   defaultVideoDesc: string = 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem.';
   videoDesc: string = this.defaultVideoDesc;
   addDesc: string = '';
-  constructor(private snackBar: MatSnackBar) {}
+  loadingText: string = 'loading';
+  hasEmbed: boolean = true;
+
+  constructor(private snackBar: MatSnackBar, private sanitizer: DomSanitizer) {}
+
+  urlFile: File = new File([""], "Url Link", { type: "video/mp4" });
 
   generateUUID(): string {
     return crypto.randomUUID();
@@ -89,7 +101,7 @@ export class UploadComponent {
       };
       this.selectedFile = input.files[0];
       this.filePath = this.selectedFile.name; // Show file name in text box
-      this.scanButtonText = 'Scan'; // Always Scan when uploading a file
+      this.scanButtonText = MODE.SCAN; // Always Scan when uploading a file
     }
     this.uuid = this.generateUUID();
   }
@@ -114,16 +126,32 @@ export class UploadComponent {
     fileInputElement?.click();
   }
 
+  extractYouTubeVideoId(url: string): string {
+    const regex = /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([\w-]{11})/;
+    const match = url.match(regex);
+    return match ? match[1] : "";
+  }
+  
+  async fetchYouTubeMetadata(videoId: string) {
+    const cleanWatchUrl = `https://www.youtube.com/watch?v=${videoId}`;
+    this.videoLink = this.sanitizer.bypassSecurityTrustResourceUrl(`https://www.youtube.com/embed/${videoId}`);
+    const oembed = `https://www.youtube.com/oembed?url=${encodeURIComponent(cleanWatchUrl)}&format=json`;
+    
+    const response = await fetch(oembed);
+    if (!response.ok) throw new Error('Invalid YouTube video or network error');
+    return await response.json();
+  }
+
   /**
    * Handles URL input validation on change
    */
   onUrlInput(): void {
     if (this.isValidUrl(this.filePath)) {
-      this.scanButtonText = 'Analyze';
+      this.scanButtonText = MODE.ANALYZE;
       this.selectedFile = null; // No file selected if URL provided
       this.isValidVideo = true; // Assume valid URL unless told otherwise
     } else {
-      this.scanButtonText = 'Scan';
+      this.scanButtonText = MODE.SCAN;
     }
   }
 
@@ -138,25 +166,57 @@ export class UploadComponent {
   async scanVideo(): Promise<void> {
     this.isLoading = true;
 
-    console.log("uploading to video to backend...");
+    this.loadingText = 'Checking for deepfake artifacts'
+    console.log(this.loadingText);
 
-    //STEP 1: upload to backend to get uuid. #################################################################################################
-    const formData = new FormData();
-    formData.append('post_file', this.selectedFile!);
-    try {
-      const response = await fetch("/api/upload/", {
-        method: 'POST',
-        body: formData,
-      });
+    //STEP 1-A: Scan and upload video to backend to get uuid. #################################################################################################
+    if(this.scanButtonText == MODE.SCAN)
+    {
+      const formData = new FormData();
+      formData.append('post_file', this.selectedFile!);
+      console.log("Analyzing input file: "+this.selectedFile);
+      try {
+        const response = await fetch("/api/upload/", {
+          method: 'POST',
+          body: formData,
+        });
 
-      const data = await response.json();
-      if (data.media_uuid) this.uploadedFileId = data.media_uuid;
-    } catch (error) {
-      console.error('Something failed', error);
+        const data = await response.json();
+        if (data.media_uuid) this.uploadedFileId = data.media_uuid;
+      } catch (error) {
+        console.error('Something failed', error);
+      }
+    }
+    //STEP 1-B: Analyze video url. #################################################################################################
+    else if(this.scanButtonText == MODE.ANALYZE)
+    {
+      console.log("Analyzing url: "+this.filePath);
+      this.uuid = this.generateUUID();
+      const videoId = this.extractYouTubeVideoId(this.filePath);
+      if (videoId == "") {
+        this.selectedFile = new File([""], this.filePath, { type: "video/mp4" });
+        this.hasEmbed = false;
+      }
+      else{
+        const metadata = await this.fetchYouTubeMetadata(videoId);
+        this.selectedFile = new File([""], metadata.title, { type: "video/mp4" });
+      }
+
+      try {
+        const response = await fetch(`/api/uploadurl?url=${this.filePath}`, {
+          method: 'POST',
+        });
+
+        const data = await response.json();
+        if (data.media_uuid) this.uploadedFileId = data.media_uuid;
+      } catch (error) {
+        console.error('Something failed', error);
+      }
     }
 
     console.log("upload to backend complete. media_uuid: "+this.uploadedFileId);
-    console.log("fetching video description and deepfake status.");
+    this.loadingText = 'Generating video description'
+    console.log(this.loadingText);
 
     //STEP 2: upload to backend to get uuid. #################################################################################################
     try {
@@ -179,27 +239,17 @@ export class UploadComponent {
     this.isLoading = false;
     this.isValidVideo = !(this.forcedIsDeepFake);
     this.isScanned = true;
+    this.loadingText = 'loading'
   }
 
   /**
    * Upload button click handler
    */
   async uploadVideo(): Promise<void> {
-    if (this.isValidUrl(this.filePath)) {
-      console.log('Analyzing URL:', this.filePath);
-      // Add logic to POST URL and process the response here
-      this.openSnackBar(`Analyzing video at URL: ${this.filePath}`);
-      return;
-    }
-
-    if (!this.selectedFile) {
-      this.openSnackBar('Invalid video! Cannot upload.');
-      return;
-    }
-
     this.fileMetadata = 
       `
         uuid: ${this.uuid}\n
+        media_uuid: ${this.uploadedFileId}\n
         Size: ${(this.formatBytes(this.selectedFile!.size))}\n
         Video Duration: ${this.formatDuration(this.videoDuration)}\n
         Submission Date: ${this.formatDT('D MMMM YYYY, h:mm A')}\n
@@ -209,7 +259,7 @@ export class UploadComponent {
       `;
 
     const formData = new FormData();
-    formData.append('video', this.selectedFile);
+    formData.append('video', this.videoURL);
     formData.append('metadata', this.fileMetadata);
 
     try {
@@ -257,10 +307,13 @@ export class UploadComponent {
     this.uploadedFileId = null;
     this.isValidVideo = null;
     this.filePath = '';
-    this.scanButtonText = 'Scan';
+    this.scanButtonText = MODE.SCAN;
     this.uuid = '';
     this.videoDesc= this.defaultVideoDesc;
     this.addDesc = '';
+    this.videoURL = ""
+    this.videoLink = undefined;
+    this.hasEmbed = true;
 
     this.isScanned = false;
 
