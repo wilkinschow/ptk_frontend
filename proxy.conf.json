@@ -1,0 +1,11 @@
+{
+  "/api": {
+    "target": "https://hwq8da3puu1a81-8000.proxy.runpod.net/",
+    "secure": false,
+    "changeOrigin": true,
+    "pathRewrite": {
+      "^/api": ""
+    }
+  }
+}
+
