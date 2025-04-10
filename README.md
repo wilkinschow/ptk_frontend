@@ -57,3 +57,18 @@ Angular CLI does not come with an end-to-end testing framework by default. You c
 ## Additional Resources
 
 For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+
+
+## Running Locally
+Use the PROXY_URL env variable inline before ng serve:
+
+bash
+PROXY_URL=https://your-target-url.com ng serve
+
+cmd
+set PROXY_URL=https://your-target-url.com && ng serve
+
+
+## Pass PROXY_URL at runtime
+docker build -t angular-app .
+docker run -p 4200:4200 -e PROXY_URL=https://your-target-url.com angular-app
