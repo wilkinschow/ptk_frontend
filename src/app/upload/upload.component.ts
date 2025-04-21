@@ -149,7 +149,6 @@ export class UploadComponent {
     if (this.isValidUrl(this.filePath)) {
       this.scanButtonText = MODE.ANALYZE;
       this.selectedFile = null; // No file selected if URL provided
-      this.isValidVideo = true; // Assume valid URL unless told otherwise
     } else {
       this.scanButtonText = MODE.SCAN;
     }
@@ -165,6 +164,7 @@ export class UploadComponent {
 
   async scanVideo(): Promise<void> {
     this.isLoading = true;
+    this.isValidVideo = true; // Assume valid URL unless told otherwise
 
     this.loadingText = 'Checking for deepfake artifacts'
     console.log(this.loadingText);
@@ -182,6 +182,7 @@ export class UploadComponent {
         });
 
         const data = await response.json();
+        if (data.deepfake) this.isValidVideo = !data.deepfake;
         if (data.media_uuid) this.uploadedFileId = data.media_uuid;
       } catch (error) {
         console.error('Something failed', error);
@@ -208,6 +209,8 @@ export class UploadComponent {
         });
 
         const data = await response.json();
+        if (data.deepfake) this.isValidVideo = !data.deepfake;
+        // else console.log("data.deepfake: " +data.deepfake);
         if (data.media_uuid) this.uploadedFileId = data.media_uuid;
       } catch (error) {
         console.error('Something failed', error);
@@ -215,29 +218,30 @@ export class UploadComponent {
     }
 
     console.log("upload to backend complete. media_uuid: "+this.uploadedFileId);
-    this.loadingText = 'Generating video description'
+    this.loadingText = this.isValidVideo ? 'Generating video description' : 'Deepfake artifacts detected!'
     console.log(this.loadingText);
 
     //STEP 2: upload to backend to get uuid. #################################################################################################
-    try {
-      const response = await fetch(`/api/predict/${this.uploadedFileId}`, {
-        method: 'POST',
-      });
-
-      const data = await response.json();
-      if (data) {
-        this.videoDesc = data.summary;
-        this.isValidVideo = !data.deepfake;
-        this.openSnackBar('Scan completed!');
-      } else {
-        this.openSnackBar('Scan failed!');
+    if(this.isValidVideo){
+      try {
+        const response = await fetch(`/api/predict/${this.uploadedFileId}`, {
+          method: 'POST',
+        });
+  
+        const data = await response.json();
+        if (data) {
+          this.videoDesc = data.summary;
+          this.isValidVideo = !data.deepfake;
+          this.openSnackBar('Scan completed!');
+        } else {
+          this.openSnackBar('Scan failed!');
+        }
+      } catch (error) {
+        console.error('Something failed', error);
       }
-    } catch (error) {
-      console.error('Something failed', error);
     }
 
     this.isLoading = false;
-    this.isValidVideo = !(this.forcedIsDeepFake);
     this.isScanned = true;
     this.loadingText = 'loading'
   }
