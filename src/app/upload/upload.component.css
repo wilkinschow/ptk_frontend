@@ -78,6 +78,7 @@
   margin-right: auto;
   width: 80%;
   max-width: 1050px;
+  min-width: 680px;
 }
 
 .buttons {
@@ -126,8 +127,9 @@ button:not([disabled]):hover {
   color: black;
   display:inline;
   position: relative;
-  top: -20px; 
-  left: 60vw;
+  top: 40px; 
+  left: -10vw;
+  float: right;
 }
 
 .new-scan-btn:hover{
@@ -286,10 +288,17 @@ video {
 .card-textarea {
   font-family: 'Inter', sans-serif;
   width: 97% !important;
-  height: 120px;
+  min-height: 480px;
   padding: 10px;
   font-size: 16px;
   border-radius: 2px;
   border: 1px solid #B8C5CC;
-  resize: none;
+  overflow-y: auto;
+  resize: vertical;
+}
+
+input:focus, 
+textarea:focus{
+  outline: 2px solid #058FE1 !important;
+  border-color: transparent;
 }
