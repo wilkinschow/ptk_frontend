@@ -237,13 +237,48 @@ export class UploadComponent {
           this.openSnackBar('Scan failed!');
         }
       } catch (error) {
-        console.error('Something failed', error);
+        console.error('Predict timed out, attempting to retrieve via query method.', error);
+        //second try to try and retrieve video description via query
+        // Retry loop
+        let maxAttempts = 10;
+        let attempts = 0;
+        let queryResult = "";
+
+        while (attempts < maxAttempts && queryResult !== "Failed") {
+          try {
+            const queryResponse = await fetch(`/api/query/${this.uploadedFileId}`, {
+              method: 'GET',
+            });
+
+            const queryData = await queryResponse.json();
+            queryResult = queryData.status;
+
+            if (queryData.status === 'Completed') {
+              this.videoDesc = queryData.summary;
+              this.isValidVideo = !queryData.deepfake;
+              this.openSnackBar('Scan completed!');
+              break; // Exit loop
+            } else {
+              console.log(`Status: ${queryData.status}. Retrying...`);
+            }
+          } catch (queryError) {
+            console.error('Query fetch error:', queryError);
+          }
+
+          // Wait 2 seconds before retrying
+          await new Promise(resolve => setTimeout(resolve, 2000));
+          attempts++;
+        }
+
+        if (attempts === maxAttempts) {
+          this.openSnackBar('Scan failed after multiple retries.');
+        }
       }
     }
 
     this.isLoading = false;
     this.isScanned = true;
-    this.loadingText = 'loading'
+    this.loadingText = 'loading';
   }
 
   /**
