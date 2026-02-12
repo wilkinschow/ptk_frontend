@@ -25,5 +25,6 @@ html, body { height: 100%; }
   /* Set default font to Inter, fallback to Avenir */
   body {
     margin: 0;
-    font-family: 'Inter', sans-serif !important;  /* Inter is the default */
+    font-family: 'Outfit', sans-serif !important;  /* Inter is the default */
+    background: var(--Gradient, linear-gradient(219deg, #3C494F 22.57%, #1D2145 55.01%));
   }

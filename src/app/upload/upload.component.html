@@ -2,10 +2,14 @@
   Is DeepFake?
 </mat-slide-toggle> -->
 
-<div class="header">
-  <img src="assets/logo.png" alt="Your Icon" class="top-icon" />
+<div 
+  *ngIf="isScanned && !isLoading"
+  class="header"
+>
+  <div class="top-container">
+    <img src="assets/logo.png" alt="V.I.V.I" class="top-icon" />
+  </div>
   <button
-    *ngIf="isScanned && !isLoading"
     class="new-scan-btn"
     (click)="cancelSelection()"
   >
@@ -16,23 +20,15 @@
 <!-- Single webpage build -->
 <!-- START of Region 1: LANDING PAGE ################################################################################## -->
 <div *ngIf="!isScanned && !isLoading" class="container">
-  <div class="slogan avenir">
-    <h3 class="gradient-text">Hello, beautiful human.</h3>
-    <p>Place a video link or upload a video</p>
+  <div class="slogan">
+    <img src="assets/logo.png" alt="V.I.V.I" class="top-icon" />
+    <p>Video Integrity, Vision Intelligence</p>
+    <p class="gold-text">for Public Safety</p>
   </div>
 
   <!-- New file selector with text box and upload icon button -->
   <div class="file-selector">
-    <input
-      #fileInput
-      type="text"
-      [(ngModel)]="filePath"
-      placeholder="Enter video URL or click to upload"
-      (input)="onUrlInput()"
-      [disabled]="selectedFile !== null"
-      class="home-input-bar"
-    />
-    <button (click)="triggerFileSelection()" class="upload-btn">
+    <button (click)="triggerFileSelection()" class="add-file-btn">
       <input
         type="file"
         id="hiddenFileInput"
@@ -40,11 +36,27 @@
         (change)="onFileSelected($event)"
         style="display: none;"
       />
-      <i class="fa-solid fa-arrow-up-from-bracket"></i>
+      <i class="fa fa-plus" aria-hidden="true"></i>
+    </button>
+    <input
+      #fileInput
+      type="text"
+      [(ngModel)]="filePath"
+      placeholder="Place a video link or upload video"
+      (input)="onUrlInput()"
+      [disabled]="selectedFile !== null"
+      class="home-input-bar"
+    />
+    <button 
+      (click)="scanVideo()" 
+      class="upload-btn"
+      [disabled]="!((isValidUrl(filePath) || selectedFile))"
+    >
+      <i class="fa fa-arrow-circle-up" aria-hidden="true"></i>
     </button>
   </div>  
 
-  <div>
+  <!-- <div>
     <button
       class="buttons"
       (click)="scanVideo()"
@@ -52,7 +64,7 @@
     >
       {{ scanButtonText }}
     </button>
-  </div>
+  </div> -->
 </div>
 <!-- END of Region 1: LANDING PAGE ################################################################################## -->
 

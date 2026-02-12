@@ -6,7 +6,8 @@
   align-items: center;
   height: 75vh;
   text-align: center;
-  background-color: white; /* Optional background color */
+  background-color: none;
+  color: white;
 }
 
 .card-title{
@@ -19,23 +20,20 @@
 }
 
 .slogan  {
-  margin: 10px 0;
   -webkit-background-clip: text;
   background-clip: text;
   font-weight: normal;
   line-height: 16px;
-  word-break: keep-all;
-  width:450px;
-
-  h3{
-    color: rgb(66, 185, 185);
-    font-size: 32px;
-    font-weight: normal;
-  }
+  word-break:normal;
 
   p{
-    font-size: 24px;
+    font-size: 64px;
   }
+}
+
+.gold-text {
+  color: orange;
+  font-weight: bold;
 }
 
 
@@ -45,9 +43,12 @@
   align-items: center;
   justify-content: center;
   margin-top: 20px;
-  background: #f4f4f4;
   width: 800px;
   height: 60px;
+  border-radius: 4px;
+  border: 1px solid var(--Colours-Neutral-Neutral-3, #3F4E57);
+  background: var(--Colours-Neutral-Neutral-2, #252F34);
+  box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.25);
 }
 
 .home-input-bar {
@@ -58,6 +59,7 @@
   border-radius: 0;
   background: none;
   margin-left: 8px;
+  color:white;
 }
 
 .rand-roll {
@@ -106,13 +108,40 @@ button:not([disabled]):hover {
   background-color: #0056b3; /* Darker blue on hover */
 }
 
-.upload-btn {
+.add-file-btn {
   color: #A0B1BB;
   background:none;
   padding: 10px 15px;
   font-size: 32px;
   cursor: pointer;
   margin-right: 12px;
+}
+
+.upload-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 15px;
+}
+
+.upload-btn:disabled {
+  background: transparent;
+  opacity: 1;              /* prevent faded look */
+  cursor: not-allowed;     /* still show it's disabled */
+}
+
+.upload-btn i {
+  font-size: 24px;
+  color: grey;   /* default = disabled look */
+  transition: color 0.2s ease;
+}
+
+.upload-btn:not(:disabled) i {
+  color: orange;
+}
+
+.upload-btn:not(:disabled):hover i {
+  color: darkorange;
 }
 
 .header {
@@ -136,14 +165,16 @@ button:not([disabled]):hover {
   color: white;
 }
 
+.top-container {
+  display: flex;
+  justify-content: center; /* horizontal center */
+}
+
 /* Style for the icon at the top */
 .top-icon {
-  width: 222px;
-  height: 90px;
-  display:inline;
-  position: relative;
-  top: 0; 
-  left: 10%;
+  margin-top:32px;
+  width: 64px;
+  height: 64px;
 }
 
 /* Style for the icon at the top */
@@ -305,6 +336,6 @@ video {
 
 input:focus, 
 textarea:focus{
-  outline: 2px solid #058FE1 !important;
+  outline: none !important;
   border-color: transparent;
 }
