@@ -21,7 +21,7 @@ enum MODE {
   styleUrls: ['./upload.component.css']
 })
 export class UploadComponent {
-  forcedIsDeepFake: boolean = false;
+  forcedIsDeepFake: boolean = true;
 
   selectedFile: File | null = null;
   fileMetadata: string = '';

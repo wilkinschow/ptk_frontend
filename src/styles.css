@@ -1,7 +1,5 @@
 /* You can add global styles to this file, and also import other style files */
 
-html, body { height: 100%; }
-
 /* Avenir Font */
 @font-face {
     font-family: 'Avenir';
@@ -23,8 +21,14 @@ html, body { height: 100%; }
   }
   
   /* Set default font to Inter, fallback to Avenir */
+  html {
+    min-height: 100%;
+    background: linear-gradient(219deg, #3C494F 22.57%, #1D2145 55.01%);
+    background-attachment: fixed;
+  }
+
   body {
     margin: 0;
-    font-family: 'Outfit', sans-serif !important;  /* Inter is the default */
-    background: var(--Gradient, linear-gradient(219deg, #3C494F 22.57%, #1D2145 55.01%));
+    font-family: 'Outfit', sans-serif !important;
+    min-height: 100%;
   }
