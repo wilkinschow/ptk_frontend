@@ -1,5 +1,5 @@
 <mat-slide-toggle [(ngModel)]="forcedIsDeepFake" color="primary">
-  <span style="color: white;">DeepFake?</span> 
+  <span style="color: white;">isDeepFake</span> 
 </mat-slide-toggle>
 
 <div 
@@ -252,7 +252,7 @@
 
 <!-- START of Region 4: LOADING PAGE ################################################################################## -->
 <div *ngIf="isLoading" class="loading">
-  <!-- <div class="image-container"> -->
+  <img src="assets/logo.png" alt="V.I.V.I" class="spin-icon" />
   <div>
     <h1 class="loading-text">
       {{loadingText}}

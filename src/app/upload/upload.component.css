@@ -229,7 +229,7 @@ button:not([disabled]):hover {
   position: relative;
   text-align: center;
   top:50%;
-  transform: translate(15px, 100px);
+  transform: translate(15px, 0);
 }
 
 .dot {
@@ -395,4 +395,28 @@ textarea:focus{
   padding: 0;
   padding-left: 32px;
   padding-top: 32px;
+}
+
+.top-container {
+  perspective: 1000px; /* needed for real 3D effect */
+}
+
+.spin-icon {
+  margin-top: 32px;
+  height: 64px;
+  animation: spinLR 4s linear infinite;
+  transform-style: preserve-3d;
+  position: relative;
+  left:50%;
+  top:50%;
+  transform: translate(-64px, 0);
+}
+
+@keyframes spinLR {
+  from {
+    transform: rotateY(0deg);
+  }
+  to {
+    transform: rotateY(360deg);
+  }
 }
