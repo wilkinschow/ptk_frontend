@@ -284,30 +284,75 @@ export class UploadComponent {
   /**
    * Upload button click handler
    */
-  async uploadVideo(): Promise<void> {
-    this.fileMetadata = 
-      `
-        uuid: ${this.uuid}\n
-        media_uuid: ${this.uploadedFileId}\n
-        Size: ${(this.formatBytes(this.selectedFile!.size))}\n
-        Video Duration: ${this.formatDuration(this.videoDuration)}\n
-        Submission Date: ${this.formatDT('D MMMM YYYY, h:mm A')}\n
-        isValidVideo: ${this.isValidVideo}\n
-        videoDesc: ${this.videoDesc}\n
-        addDesc: ${this.addDesc}\n
-      `;
+  // async uploadVideo(): Promise<void> {
+  //   this.fileMetadata = 
+  //     `
+  //       uuid: ${this.uuid}\n
+  //       media_uuid: ${this.uploadedFileId}\n
+  //       Size: ${(this.formatBytes(this.selectedFile!.size))}\n
+  //       Video Duration: ${this.formatDuration(this.videoDuration)}\n
+  //       Submission Date: ${this.formatDT('D MMMM YYYY, h:mm A')}\n
+  //       isValidVideo: ${this.isValidVideo}\n
+  //       videoDesc: ${this.videoDesc}\n
+  //       addDesc: ${this.addDesc}\n
+  //     `;
 
-    const formData = new FormData();
-    formData.append('video', this.videoURL);
-    formData.append('metadata', this.fileMetadata);
+  //   const formData = new FormData();
+  //   formData.append('video', this.videoURL);
+  //   formData.append('metadata', this.fileMetadata);
+
+  //   try {
+  //     const response = await fetch('http://localhost:3000/upload', {
+  //       method: 'POST',
+  //       body: formData,
+  //     });
+
+  //     const data = await response.json();
+  //     if (data.videoId) {
+  //       this.uploadedFileId = data.videoId;
+  //       this.getMetadata();
+  //     }
+
+  //     await this.toggleLoading();
+
+  //     this.openSnackBar();
+  //     this.cancelSelection();
+  //   } catch (error) {
+  //     console.error('Upload failed', error);
+  //   }
+  // }
+
+  async uploadVideo(): Promise<void> {
+
+    const payload = {
+      uuid: this.uuid,
+      media_uuid: this.uploadedFileId,
+      name: this.selectedFile!.name,
+      size: this.formatBytes(this.selectedFile!.size),
+      videoURL: this.isValidUrl(this.filePath) ? this.filePath : "",
+      videoDuration: this.formatDuration(this.videoDuration),
+      submissionDate: this.formatDT('D MMMM YYYY, h:mm A'),
+      isValidVideo: this.isValidVideo,
+      videoDesc: this.videoDesc,
+      addDesc: this.addDesc,
+      incidentType: "Traffic",
+      severity: 0, //0 - Unassigned severity
+      location: "Buona Vista",
+      summary: "",
+
+    };
 
     try {
       const response = await fetch('http://localhost:3000/upload', {
         method: 'POST',
-        body: formData,
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload),
       });
 
       const data = await response.json();
+
       if (data.videoId) {
         this.uploadedFileId = data.videoId;
         this.getMetadata();
@@ -317,6 +362,7 @@ export class UploadComponent {
 
       this.openSnackBar();
       this.cancelSelection();
+
     } catch (error) {
       console.error('Upload failed', error);
     }
