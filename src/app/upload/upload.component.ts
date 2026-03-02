@@ -278,7 +278,7 @@ export class UploadComponent {
 
     this.isLoading = false;
     this.isScanned = true;
-    this.loadingText = 'loading';
+    this.loadingText = 'Loading';
   }
 
   /**
