@@ -71,9 +71,9 @@
 <!-- START of Region 2: DEEPFAKE PAGE ################################################################################## -->
 <div *ngIf="isScanned && !isLoading && (!isValidVideo || forcedIsDeepFake)" class="results">
   <mat-card-header class="card-header">
-      <mat-card-title class="title-deepfake-false card-title" >
+      <!-- <mat-card-title class="title-deepfake-false card-title" >
         Thank you for your Submission!
-      </mat-card-title>
+      </mat-card-title> -->
     </mat-card-header>
     <div class="card-body-split">
       <mat-card class="card">
@@ -157,9 +157,9 @@
 <!-- START of Region 3: AUTHENTIC PAGE ################################################################################## -->
 <div *ngIf="isScanned && !isLoading && isValidVideo && !forcedIsDeepFake" class="results">
     <mat-card-header class="card-header">
-      <mat-card-title class="title-deepfake-false card-title" >
+      <!-- <mat-card-title class="title-deepfake-false card-title" >
         Thank you for your Submission!
-      </mat-card-title>
+      </mat-card-title> -->
     </mat-card-header>
     <div class="card-body-split">
       <mat-card class="card">

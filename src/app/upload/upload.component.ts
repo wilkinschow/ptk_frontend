@@ -39,7 +39,7 @@ export class UploadComponent {
   defaultVideoDesc: string = 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem.';
   videoDesc: string = this.defaultVideoDesc;
   addDesc: string = '';
-  loadingText: string = 'loading';
+  loadingText: string = 'Loading';
   hasEmbed: boolean = true;
 
   constructor(private snackBar: MatSnackBar, private sanitizer: DomSanitizer) {}
