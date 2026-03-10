@@ -1,6 +1,7 @@
 {
   "/api": {
-    "target": "https://hwq8da3puu1a81-8000.proxy.runpod.net/",
+    // "target": "https://hwq8da3puu1a81-8000.proxy.runpod.net/",
+    "target": "http://localhost:4000/",
     "secure": false,
     "changeOrigin": true,
     "pathRewrite": {

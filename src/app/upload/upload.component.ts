@@ -21,7 +21,7 @@ enum MODE {
   styleUrls: ['./upload.component.css']
 })
 export class UploadComponent {
-  forcedIsDeepFake: boolean = true;
+  forcedIsDeepFake: boolean = false;
 
   selectedFile: File | null = null;
   fileMetadata: string = '';
@@ -38,7 +38,12 @@ export class UploadComponent {
   currTime: Date = new Date();
   defaultVideoDesc: string = 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem.';
   videoDesc: string = this.defaultVideoDesc;
+  defaultSummary: string = 'Lorem ipsum dolor sit amet';
+  summary: string = this.defaultSummary;
   addDesc: string = '';
+  severity: string = '1';
+  incidentType: string = 'Traffic';
+  location: string = 'Tampines';
   loadingText: string = 'Loading';
   hasEmbed: boolean = true;
 
@@ -47,7 +52,21 @@ export class UploadComponent {
   urlFile: File = new File([""], "Url Link", { type: "video/mp4" });
 
   generateUUID(): string {
-    return crypto.randomUUID();
+    const now = new Date();
+    const timestamp = now.getFullYear().toString() +
+                      String(now.getMonth() + 1).padStart(2, '0') +
+                      String(now.getDate()).padStart(2, '0') +
+                      String(now.getHours()).padStart(2, '0') +
+                      String(now.getMinutes()).padStart(2, '0') +
+                      String(now.getSeconds()).padStart(2, '0');
+    
+    // Generate 4-character hexadecimal random suffix
+    const randomSuffix = Math.floor(Math.random() * 65536)
+      .toString(16)
+      .toUpperCase()
+      .padStart(4, '0');
+    
+    return timestamp + randomSuffix;
   }
 
   formatBytes(bytes: number): string {
@@ -230,8 +249,12 @@ export class UploadComponent {
   
         const data = await response.json();
         if (data) {
+          this.summary = data.shortsummary;
           this.videoDesc = data.summary;
           this.isValidVideo = !data.deepfake;
+          this.incidentType = data.incidentType;
+          this.location = data.location;
+          this.severity = data.severity;
           this.openSnackBar('Scan completed!');
         } else {
           this.openSnackBar('Scan failed!');
@@ -254,8 +277,12 @@ export class UploadComponent {
             queryResult = queryData.status;
 
             if (queryData.status === 'Completed') {
+              this.summary = queryData.shortsummary;
               this.videoDesc = queryData.summary;
               this.isValidVideo = !queryData.deepfake;
+              this.incidentType = queryData.incidentType;
+              this.location = queryData.location;
+              this.severity = queryData.severity;
               this.openSnackBar('Scan completed!');
               break; // Exit loop
             } else {
@@ -323,7 +350,6 @@ export class UploadComponent {
   // }
 
   async uploadVideo(): Promise<void> {
-
     const payload = {
       uuid: this.uuid,
       media_uuid: this.uploadedFileId,
@@ -335,10 +361,10 @@ export class UploadComponent {
       isValidVideo: this.isValidVideo,
       videoDesc: this.videoDesc,
       addDesc: this.addDesc,
-      incidentType: "Traffic",
-      severity: 0, //0 - Unassigned severity
-      location: "Buona Vista",
-      summary: "",
+      incidentType: this.incidentType,
+      severity: this.severity,
+      location: this.location,
+      summary: this.summary
 
     };
 
