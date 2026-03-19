@@ -90,8 +90,8 @@ export class UploadComponent {
     const dateTime = new Date();
     this.currTime = dateTime;
     return isTime ? 
-     moment(dateTime).format("hh:mm A") :
-     moment(dateTime).format("DD/MM/YYYY");
+     moment(dateTime).format("h:mm:ss A") :
+     moment(dateTime).format("d MMMM y");
   }
 
   formatDT(format: string){

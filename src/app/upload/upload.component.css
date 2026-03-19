@@ -139,8 +139,11 @@ button:not([disabled]):hover {
   color: #A0B1BB;
   background:none;
   padding: 15px;
-  font-size: 16px;
+  font-size: 30px;
   cursor: pointer;
+  height: 60px;
+  width: 60px;
+  margin-right: 12px;
 }
 
 .upload-btn {
@@ -157,7 +160,7 @@ button:not([disabled]):hover {
 }
 
 .upload-btn i {
-  font-size: 24px;
+  font-size: 30px;
   color: #4B5E68;   /* default = disabled look */
   transition: color 0.2s ease;
 }
