@@ -6,7 +6,6 @@ import {MatCardModule} from '@angular/material/card';
 import moment from 'moment';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
 enum MODE {
   ANALYZE = "Analyze",
@@ -32,7 +31,6 @@ export class UploadComponent {
   filePath: string = '';
   scanButtonText: string = MODE.SCAN;
   videoURL: string = '';
-  videoLink? : SafeResourceUrl;
   videoDuration: number = 0; // Store video duration
   uuid: string = '';
   currTime: Date = new Date();
@@ -45,9 +43,8 @@ export class UploadComponent {
   incidentType: string = 'Traffic';
   location: string = 'Tampines';
   loadingText: string = 'Loading';
-  hasEmbed: boolean = true;
 
-  constructor(private snackBar: MatSnackBar, private sanitizer: DomSanitizer) {}
+  constructor(private snackBar: MatSnackBar) {}
 
   urlFile: File = new File([""], "Url Link", { type: "video/mp4" });
 
@@ -109,18 +106,20 @@ export class UploadComponent {
     const input = event.target as HTMLInputElement;
 
     if (input.files && input.files.length > 0) {
-      this.videoURL = URL.createObjectURL(input.files[0]);
-      // Create a video element to get duration
+      this.selectedFile = input.files[0];
+      this.filePath = this.selectedFile.name; // Show file name in text box
+      this.scanButtonText = MODE.SCAN; // Always Scan when uploading a file
+      
+      // Create a video element to get duration (using blob URL temporarily)
       const videoElement = document.createElement('video');
-      videoElement.src = URL.createObjectURL(input.files[0]);
+      const blobUrl = URL.createObjectURL(input.files[0]);
+      videoElement.src = blobUrl;
       
       // Wait for the video metadata to load, then get the duration
       videoElement.onloadedmetadata = () => {
         this.videoDuration = videoElement.duration; // Set duration in seconds
+        URL.revokeObjectURL(blobUrl); // Clean up the blob URL
       };
-      this.selectedFile = input.files[0];
-      this.filePath = this.selectedFile.name; // Show file name in text box
-      this.scanButtonText = MODE.SCAN; // Always Scan when uploading a file
     }
     this.uuid = this.generateUUID();
   }
@@ -143,22 +142,6 @@ export class UploadComponent {
   triggerFileSelection(): void {
     const fileInputElement = document.getElementById('hiddenFileInput') as HTMLInputElement;
     fileInputElement?.click();
-  }
-
-  extractYouTubeVideoId(url: string): string {
-    const regex = /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([\w-]{11})/;
-    const match = url.match(regex);
-    return match ? match[1] : "";
-  }
-  
-  async fetchYouTubeMetadata(videoId: string) {
-    const cleanWatchUrl = `https://www.youtube.com/watch?v=${videoId}`;
-    this.videoLink = this.sanitizer.bypassSecurityTrustResourceUrl(`https://www.youtube.com/embed/${videoId}`);
-    const oembed = `https://www.youtube.com/oembed?url=${encodeURIComponent(cleanWatchUrl)}&format=json`;
-    
-    const response = await fetch(oembed);
-    if (!response.ok) throw new Error('Invalid YouTube video or network error');
-    return await response.json();
   }
 
   /**
@@ -212,15 +195,7 @@ export class UploadComponent {
     {
       console.log("Analyzing url: "+this.filePath);
       this.uuid = this.generateUUID();
-      const videoId = this.extractYouTubeVideoId(this.filePath);
-      if (videoId == "") {
-        this.selectedFile = new File([""], this.filePath, { type: "video/mp4" });
-        this.hasEmbed = false;
-      }
-      else{
-        const metadata = await this.fetchYouTubeMetadata(videoId);
-        this.selectedFile = new File([""], metadata.title, { type: "video/mp4" });
-      }
+      this.selectedFile = new File([""], this.filePath, { type: "video/mp4" });
 
       try {
         const response = await fetch(`/api/uploadurl?url=${this.filePath}`, {
@@ -229,7 +204,6 @@ export class UploadComponent {
 
         const data = await response.json();
         if (data.deepfake) this.isValidVideo = !data.deepfake;
-        // else console.log("data.deepfake: " +data.deepfake);
         if (data.media_uuid) this.uploadedFileId = data.media_uuid;
       } catch (error) {
         console.error('Something failed', error);
@@ -237,6 +211,12 @@ export class UploadComponent {
     }
 
     console.log("upload to backend complete. media_uuid: "+this.uploadedFileId);
+    
+    // Set video URL to backend_vlm endpoint for both SCAN and ANALYZE modes
+    if (this.uploadedFileId) {
+      this.videoURL = `/api/video/${this.uploadedFileId}`;
+    }
+    
     this.loadingText = this.isValidVideo ? 'Generating video description' : 'Deepfake artifacts detected!'
     console.log(this.loadingText);
 
@@ -291,7 +271,6 @@ export class UploadComponent {
           } catch (queryError) {
             console.error('Query fetch error:', queryError);
           }
-
           // Wait 2 seconds before retrying
           await new Promise(resolve => setTimeout(resolve, 2000));
           attempts++;
@@ -423,12 +402,10 @@ export class UploadComponent {
     this.videoDesc= this.defaultVideoDesc;
     this.addDesc = '';
     this.videoURL = ""
-    this.videoLink = undefined;
-    this.hasEmbed = true;
 
     this.isScanned = false;
 
-    // Reset the hidden file input (optional)
+    // Reset hidden file input (optional)
     const fileInputElement = document.getElementById('hiddenFileInput') as HTMLInputElement;
     if (fileInputElement) fileInputElement.value = '';
   }

@@ -81,17 +81,8 @@
           <div *ngIf="videoURL" class="video-player">
             <video width="592" height="333" controls>
               <source [src]="videoURL" type="video/mp4">
-              Your browser does not support the video tag.
+              Your browser does not support video tag.
             </video>
-          </div>
-          <div *ngIf="videoLink" class="video-player">
-            <iframe
-              width="592" height="333"
-              [src]="videoLink"
-              frameborder="0"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowfullscreen
-            ></iframe>
           </div>
         </mat-card-actions>
       </mat-card>
@@ -113,10 +104,6 @@
     </div>
     
 
-  <mat-card *ngIf="hasEmbed" class="card" style="margin-top: 2rem;">
-    
-    
-  </mat-card>
   <mat-card class="card">
     <mat-card-header class="card-header with-background">
       <mat-card-title class="card-title">
@@ -167,17 +154,8 @@
           <div *ngIf="videoURL" class="video-player">
             <video width="592" height="333" controls>
               <source [src]="videoURL" type="video/mp4">
-              Your browser does not support the video tag.
+              Your browser does not support video tag.
             </video>
-          </div>
-          <div *ngIf="videoLink" class="video-player">
-            <iframe
-              width="592" height="333"
-              [src]="videoLink"
-              frameborder="0"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowfullscreen
-            ></iframe>
           </div>
         </mat-card-actions>
       </mat-card>
@@ -199,10 +177,6 @@
     </div>
     
 
-  <mat-card *ngIf="hasEmbed" class="card" style="margin-top: 2rem;">
-    
-    
-  </mat-card>
   <mat-card class="card">
     <mat-card-header class="card-header with-background">
       <mat-card-title class="card-title">
