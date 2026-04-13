@@ -21,6 +21,7 @@ enum MODE {
 })
 export class UploadComponent {
   forcedIsDeepFake: boolean = false;
+  isUrlSubmission: boolean = false;
 
   selectedFile: File | null = null;
   fileMetadata: string = '';
@@ -164,6 +165,25 @@ export class UploadComponent {
     return urlPattern.test(url);
   }
 
+  /**
+   * Extract source platform name from URL
+   */
+  getSourceFromUrl(url: string): string {
+    try {
+      const domain = new URL(url).hostname.toLowerCase();
+      if (domain.includes('youtube.com') || domain.includes('youtu.be')) return 'YouTube';
+      if (domain.includes('tiktok.com')) return 'TikTok';
+      if (domain.includes('facebook.com') || domain.includes('fb.watch')) return 'Facebook';
+      if (domain.includes('instagram.com')) return 'Instagram';
+      if (domain.includes('twitter.com') || domain.includes('x.com')) return 'X (Twitter)';
+      if (domain.includes('telegram.org') || domain.includes('t.me')) return 'Telegram';
+      if (domain.includes('whatsapp.com')) return 'WhatsApp';
+      return domain;
+    } catch {
+      return '';
+    }
+  }
+
   async scanVideo(): Promise<void> {
     this.isLoading = true;
     this.isValidVideo = true; // Assume valid URL unless told otherwise
@@ -174,6 +194,7 @@ export class UploadComponent {
     //STEP 1-A: Scan and upload video to backend to get uuid. #################################################################################################
     if(this.scanButtonText == MODE.SCAN)
     {
+      this.isUrlSubmission = false;
       const formData = new FormData();
       formData.append('post_file', this.selectedFile!);
       console.log("Analyzing input file: "+this.selectedFile);
@@ -186,6 +207,7 @@ export class UploadComponent {
         const data = await response.json();
         if (data.deepfake) this.isValidVideo = !data.deepfake;
         if (data.media_uuid) this.uploadedFileId = data.media_uuid;
+        if (data.duration) this.videoDuration = data.duration;
       } catch (error) {
         console.error('Something failed', error);
       }
@@ -193,9 +215,11 @@ export class UploadComponent {
     //STEP 1-B: Analyze video url. #################################################################################################
     else if(this.scanButtonText == MODE.ANALYZE)
     {
+      this.isUrlSubmission = true;
       console.log("Analyzing url: "+this.filePath);
       this.uuid = this.generateUUID();
       this.selectedFile = new File([""], this.filePath, { type: "video/mp4" });
+      this.addDesc = this.getSourceFromUrl(this.filePath);
 
       try {
         const response = await fetch(`/api/uploadurl?url=${this.filePath}`, {
@@ -205,6 +229,7 @@ export class UploadComponent {
         const data = await response.json();
         if (data.deepfake) this.isValidVideo = !data.deepfake;
         if (data.media_uuid) this.uploadedFileId = data.media_uuid;
+        if (data.duration) this.videoDuration = data.duration;
       } catch (error) {
         console.error('Something failed', error);
       }
@@ -402,6 +427,8 @@ export class UploadComponent {
     this.videoDesc= this.defaultVideoDesc;
     this.addDesc = '';
     this.videoURL = ""
+    this.isUrlSubmission = false;
+    this.videoDuration = 0;
 
     this.isScanned = false;
 
