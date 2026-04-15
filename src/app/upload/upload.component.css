@@ -61,7 +61,7 @@
   border-radius: 4px;
   border: 1px solid var(--Colours-Neutral-Neutral-3, #3F4E57);
   background: var(--Colours-Neutral-Neutral-2, #252F34);
-  box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.25);
+  /* box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.25); */
 }
 
 .home-input-bar {
@@ -202,8 +202,8 @@ button:not([disabled]):hover {
 /* Style for the icon at the top */
 .top-icon {
   margin-top:32px;
-  width: 64px;
-  height: 64px;
+  width: 110px;
+  height: 110px;
 }
 
 /* Style for the icon at the top */
@@ -263,6 +263,11 @@ button:not([disabled]):hover {
   }
 }
 
+.mat-mdc-card {
+  border-radius: 0 !important;
+  box-shadow: none !important;    
+}
+
 .card{
   font-size: 16px;
   background: none;
@@ -271,7 +276,7 @@ button:not([disabled]):hover {
 
 .card-header{
   padding: 0;
-  padding-bottom: 16px;
+  padding-bottom: 32px;
   color: white;
   font-size: 28px;
 }
@@ -280,14 +285,15 @@ button:not([disabled]):hover {
   display:flex;
   flex-direction: row;
   padding:32px;
-  border-radius: 4px;
+  /* border-radius: 4px; */
   background: rgba(0, 0, 0, 0.30);
 }
 
 .card-body-split{
   display: flex;
   align-items: center;
-  gap: 24px;
+  /* gap: 12px; */
+  /* margin-bottom: 12px; */
 }
 
 .card-body-split > * {
@@ -300,7 +306,7 @@ button:not([disabled]):hover {
   flex-direction: column;
   align-items: flex-start;
   padding:32px;
-  border-radius: 4px;
+  /* border-radius: 4px; */
   background: rgba(0, 0, 0, 0.30);
   min-height: 333px;
   min-width: 100%;
@@ -362,14 +368,17 @@ button:not([disabled]):hover {
 
 .video-player{
   width: 100%;
+  height: 333px;
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
 video {
+  margin-top: 1px;
   border-radius: 5px;
   border: 1px solid #B8C5CC;
+  
 }
 
 .card-textarea {
@@ -393,7 +402,7 @@ textarea:focus{
 }
 
 .with-background{
-  border-radius: 4px;
+  /* border-radius: 4px; */
   background: rgba(0, 0, 0, 0.30);
   padding: 0;
   padding-left: 32px;
@@ -406,20 +415,20 @@ textarea:focus{
 
 .spin-icon {
   margin-top: 32px;
-  height: 64px;
+  height: 110px;
   animation: spinLR 4s linear infinite;
   transform-style: preserve-3d;
   position: relative;
   left:50%;
   top:50%;
-  transform: translate(-64px, 0);
+  transform: translate(-50%, 0);
 }
 
 @keyframes spinLR {
   from {
-    transform: rotateY(0deg);
+    transform: translate(-50%, 0) rotateY(0deg);
   }
   to {
-    transform: rotateY(360deg);
+    transform: translate(-50%, 0) rotateY(360deg);
   }
 }
