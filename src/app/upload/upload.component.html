@@ -79,10 +79,13 @@
       <mat-card class="card">
         <mat-card-actions class="card-body-split-child" style="padding-top: 0; padding-bottom: 0;">
           <div *ngIf="videoURL" class="video-player">
-            <video width="592" height="333" controls>
-              <source [src]="videoURL" type="video/mp4">
-              Your browser does not support video tag.
-            </video>
+            <div class="video-watermark-wrapper">
+              <video width="592" height="333" controls>
+                <source [src]="videoURL" type="video/mp4">
+                Your browser does not support video tag.
+              </video>
+              <div class="video-watermark">FOR DEMO PURPOSES ONLY</div>
+            </div>
           </div>
         </mat-card-actions>
       </mat-card>
@@ -153,10 +156,13 @@
       <mat-card class="card">
         <mat-card-actions class="card-body-split-child" style="padding-top: 0; padding-bottom: 0;">
           <div *ngIf="videoURL" class="video-player">
-            <video width="592" height="333" controls>
-              <source [src]="videoURL" type="video/mp4">
-              Your browser does not support video tag.
-            </video>
+            <div class="video-watermark-wrapper">
+              <video width="592" height="333" controls>
+                <source [src]="videoURL" type="video/mp4">
+                Your browser does not support video tag.
+              </video>
+              <div class="video-watermark">FOR DEMO PURPOSES ONLY</div>
+            </div>
           </div>
         </mat-card-actions>
       </mat-card>
